@@ -1,18 +1,30 @@
 const router = require('express').Router();
 const connection = require('../connection');
 
-router.get("/check", (req, res, next) => {
-
-    connection.query('select * from tasks', function (err, data) {
+router.get("/", (req, res, next) => {
+    
+    connection.query("select * from tasks", function (err, data) {
         if (err) {
             throw err;
         }
         res.json(data);
         res.end();
-    });
+    }); 
 });
 
-router.post("/create", (req, res, next) => {
+router.get("/:ProjectID", (req, res, next) => {
+
+    let tasks=req.params.ProjectID;
+    connection.query(`select * from tasks where ProjectID=${tasks}`, function (err, data) {
+        if (err) {
+            throw err.message;
+        }
+        res.json(data);
+        res.end();
+    }); 
+});
+
+router.post("/", (req, res, next) => {
     let tasks = req.body;
     var query = "insert into tasks (TaskID,TaskName,ProjectID,Status,AssignedTo,StartDate, DueDate) values(?,?,?,?,?,?,?)";
     connection.query(query, [tasks.TaskID, tasks.TaskName, tasks.ProjectID,tasks.Status,tasks.AssignedTo,
@@ -24,13 +36,13 @@ router.post("/create", (req, res, next) => {
     });
 });
 
-router.patch('/update/:TaskID', (req, res, next) => {
-    const id = req.params.TaskID;
+router.post('/update', (req, res, next) => {
+    // const id = req.params.TaskID;
     let tasks = req.body;
 
     var query = "update tasks set TaskName=?,ProjectID=?, Status=?,AssignedTo=?, StartDate=?, DueDate=? where TaskID=?";
     connection.query(query, [tasks.TaskName,tasks.ProjectID,tasks.Status, tasks.AssignedTo, tasks.StartDate,
-    tasks.DueDate, id], (err, results) => {
+    tasks.DueDate, tasks.TaskID], (err, results) => {
         if (!err) {
             if (results.affectedRows === 0) {
                 return res.status(404).json({ message: "Task ID not found" });

@@ -1,3 +1,4 @@
+const cors = require('cors');
 const app = require('./index');
 const connection = require('./connection');
 
@@ -9,7 +10,7 @@ const discussionsRouter = require('./routes/discussions');
 const logsRouter = require('./routes/logs');
 const subtasksRouter = require('./routes/subtasks');
 
-const cors= require('cors');
+
 
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to my main application" });
@@ -18,9 +19,11 @@ app.get("/", (req, res) => {
 /////////////////////////
 
 app.use(cors({
-    origin: "*",
+
+    allowedOrigins: "http://localhost:3000",
+    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
     credentials: true,
-    allowedHeaders: "Content-Type, Authorization, Origin, X-Requested-With, Accept"
+    allowedHeaders: ["Content-Type, Authorization, Origin, X-Requested-With, Accept,access-control-allow-origin"],
 }));
 
 /////////////////////////

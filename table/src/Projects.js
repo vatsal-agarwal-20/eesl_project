@@ -4,37 +4,30 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor'
 import { Button } from 'semantic-ui-react';
-// import Example from './OffCanvas';
-// import Navbar from './Navbar';
+import Example from './OffCanvas';
+import Navbar from './Navbar';
 import Tasks from './Tasks';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import './Projects.css'
 
 
-function TextField({updateData,deleteData ,...props}) {
-  const [projectName,setProjectName]=useState(props.name)
-  
-  const changeVal=(e)=>{
-    updateData(e.target.value,props.id)
-    setProjectName(e.target.value);
-  }
+function TextField({...props}) {
     return (
       <div>
           <InputGroup size="lg" id={props.projectId}>
           <InputGroup.Text id="inputGroup-sizing-lg">Project Name</InputGroup.Text>
-          {/* <Form.Control
+          <Form.Control
             aria-label="Project Name"
             aria-describedby="inputGroup-sizing-sm"
             type="text"
             defaultValue={props.name}
             // onChange={}
-          /> */}
-          <input type="text" style={{"width":"50%", "borderColor":"#DADBDB","marginLeft":"2px", "height":"50px"}} value={projectName} onChange={(e)=>changeVal(e)} />
-          <button className='btn btn-primary' style={{"marginLeft":"87%", "backgroundColor":"#06CAFF","padding":"0.5%"}} onClick={(e)=>deleteData(e,props.id)}> Delete Project</button> 
+          />
         </InputGroup>
         <br/>
+        
         <Tasks projectId={props.id} taskData={props.data}/>
-        <br/>
         <br/>
         <br/>
       </div>
@@ -54,7 +47,7 @@ function TextField({updateData,deleteData ,...props}) {
 //     )
 //   }
 
-function App(){
+function Projects(){
     const [data, setData] = useState([]);
     let dataLength = data.length
     if (dataLength>0) console.log("Data id", data[0].ProjectID);
@@ -87,20 +80,20 @@ function App(){
     };
   
     const addData = async () => {
-      console.log('add data length', dataLength);
       const newData = {
-        "ProjectName": "New Project",
+        "ProjectName": `Project ${dataLength+1}`,
         "StartDate": "2022-01-01",
         "DueDate": "2022-12-31",
         "Status": "Working On It",
         "ColorCode":"Yellow",
         "CreatedBy": 1,
-        "isActive":1
+        "ProjectID": 30
       }
   
       await axios.post('http://localhost:8078/projects', newData, { headers: { "Content-Type": "application/json" } })
         .then(res => {
           setData([newData, ...data]);
+          
           getData();
         })
         .catch(error => {
@@ -110,37 +103,24 @@ function App(){
     }
   
   
-    const updateData = async (newName, currID) => {
-      console.log("New Name for project");
-      console.log(newName);
-      console.log("current id", currID);
-      
-      const res= data.find((item)=>
-        item.ProjectID === currID
-      )
-      console.log("update res");
-      console.log(res);
-      console.log("update res name");
-      console.log(res["ProjectName"]);
-      res["ProjectName"]=newName;
-      // // rowId, result, column
-      // // data.Item = "Updated";
-      // console.log("Updated result");
-      // console.log(result);
-      // let cell = column.dataField;
-      // console.log('cell', cell);
+    const updateData = async (rowId, result, column) => {
+      // data.Item = "Updated";
+      console.log("Updated result");
+      console.log(result);
+      let cell = column.dataField;
+      console.log('cell', cell);
   
-      await axios.post("http://localhost:8078/projects/update", res, {
+      await axios.post("http://localhost:8078/projects/update", result, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-        .then(resp => {
+        .then(res => {
           console.log("Patch call called");
-          // console.log("Updated data", data);
+          console.log("Updated data", data);
           // if (data[rowId] !== result) change(result, rowId, cell);
-          // data[rowId][cell] = value;
-          // console.log("Again updated ", data);
+          data[rowId][cell] = value;
+          console.log("Again updated ", data);
           // const updatedData= result.find(e=>{
           //   e.column.dataField === cell ? data[rowId][cell]=result.cell : setData(data);
           //   return data;
@@ -150,19 +130,15 @@ function App(){
           setColumn({})
           setRowId();
           setRowData({});
-          // result = {};
+          result = {};
           getData();
         })
         .catch(err => {
           console.log(err);
         })
     }
-    const deleteData= async(e,id)=>{
-      e.preventDefault();
-      const delID={
-        "ProjectID":id
-      }
-      await axios.post("http://localhost:8078/projects/delete", delID)
+    const deleteData= async(id)=>{
+      await axios.delete(`http://localhost:8078/projects/delete/${id}`)
       .then(res=>{
         getData();
       })
@@ -282,15 +258,15 @@ function App(){
     // }, []);
   
     const projectTable = data.map((item,id)=>{
-      console.log('map item',item);
-      return <div key={id}>
-        <TextField data={item} name={item.ProjectName} id={item.ProjectID} index={id} updateData={updateData} deleteData={deleteData}/>
+      return <div key={id} className="table-element">
+        <TextField data={item} name={item.ProjectName} id={item.ProjectID}/>
       </div>
+      
     })
   
     return (
       <div className="App">
-        <Button className="btn btn-primary" onClick={addData}>New Project</Button>
+        <Button className="btn btn-primary" onClick={addData}>Add Data</Button>
 
         {/* <div className='table-page'>
             {
@@ -303,6 +279,7 @@ function App(){
         </div> */}
         <>
         {projectTable}
+        
         </>
         
         {/* <BootstrapTable striped hover condensed
@@ -354,7 +331,7 @@ function App(){
   
         {/* <Editable2/> */}
   
-        {/* <Example /> */}
+        
         {/* <BasicForm/> */}
         {/* <Navbar/> */}
 
@@ -364,5 +341,5 @@ function App(){
     );
   }
   
-  export default App;
+  export default Projects;
 

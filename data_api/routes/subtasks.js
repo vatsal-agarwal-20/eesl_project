@@ -1,5 +1,8 @@
+
 const router = require('express').Router();
 const connection = require('../connection');
+
+
 
 router.get("/", (req, res, next) => {
 
@@ -11,6 +14,16 @@ router.get("/", (req, res, next) => {
         res.end();
     });
 });
+router.get("/count",(req,res,next)=>{
+    connection.query("select count(SubtaskID) from subtasks", function(err,data){
+        if(err)
+        throw err;
+
+        console.log(res.json(data)); 
+        console.log(count(SubtaskID));
+        res.end();
+    })
+})
 
 router.post("/", (req, res, next) => {
     let subtasks = req.body;
@@ -26,14 +39,13 @@ router.post("/", (req, res, next) => {
     });
 });
 
-router.patch('/update/:SubtaskID', (req, res, next) => {
-    const id = req.params.SubtaskID;
+router.post('/update', (req, res, next) => {
+    // const id = req.params.SubtaskID;
     let subtasks = req.body;
 
-    debugger
-    var query = "update subtasks set Item,Person,Status,Date, Description, TaskID where SubtaskID=?";
+    var query = "update subtasks set Item=?,Person=?,Status=?,Date=?, Description=?, TaskID=? where SubtaskID=?";
     connection.query(query, [subtasks.Item, subtasks.Person, subtasks.Status, subtasks.Date, subtasks.Description,
-    subtasks.TaskID, id], (err, results) => {
+    subtasks.TaskID, subtasks.SubtaskID], (err, results) => {
         if (!err) {
             if (results.affectedRows === 0) {
                 return res.status(404).json({ message: "Subtask ID not found" });
