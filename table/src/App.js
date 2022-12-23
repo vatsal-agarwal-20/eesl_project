@@ -3,15 +3,19 @@ import React, { useState, useEffect } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor'
-import { Button } from 'semantic-ui-react';
+import { Button } from 'react-bootstrap';
 // import Example from './OffCanvas';
 // import Navbar from './Navbar';
 import Tasks from './Tasks';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Sidebar from './Sidebar';
+import './App.css'
+import Modal from 'react-bootstrap/Modal';
 
 
-function TextField({updateData,deleteData ,...props}) {
+function TextField({updateDeleteID,updateData,deleteData ,...props}) {
+  
   const [projectName,setProjectName]=useState(props.name)
   
   const changeVal=(e)=>{
@@ -20,7 +24,7 @@ function TextField({updateData,deleteData ,...props}) {
   }
     return (
       <div>
-          <InputGroup size="lg" id={props.projectId}>
+          <InputGroup size="lg" id={props.id}>
           <InputGroup.Text id="inputGroup-sizing-lg">Project Name</InputGroup.Text>
           {/* <Form.Control
             aria-label="Project Name"
@@ -30,7 +34,8 @@ function TextField({updateData,deleteData ,...props}) {
             // onChange={}
           /> */}
           <input type="text" style={{"width":"50%", "borderColor":"#DADBDB","marginLeft":"2px", "height":"50px"}} value={projectName} onChange={(e)=>changeVal(e)} />
-          <button className='btn btn-primary' style={{"marginLeft":"87%", "backgroundColor":"#06CAFF","padding":"0.5%"}} onClick={(e)=>deleteData(e,props.id)}> Delete Project</button> 
+          <Button variant='danger' style={{"marginLeft":"87%","padding":"0.5%", "borderRadius":"10%"}} onClick={(e)=>updateDeleteID(e,props.id)}> Delete Project</Button> 
+          {/* (e)=>deleteData(e,props.id) */}
         </InputGroup>
         <br/>
         <Tasks projectId={props.id} taskData={props.data}/>
@@ -55,7 +60,20 @@ function TextField({updateData,deleteData ,...props}) {
 //   }
 
 function App(){
+  // function refreshPage() {
+  //   window.location.reload(false);
+  // }
     const [data, setData] = useState([]);
+    const [deleteProjectID, setDeleteProjectID]=useState();
+    const [modalShow, setModalShow]= useState(false);
+
+    const updateDeleteID = (e,id)=>{
+      e.preventDefault();
+      console.log("updated deleted id");
+      console.log(id);
+      setDeleteProjectID(id);
+      setModalShow(true);
+    }
     let dataLength = data.length
     if (dataLength>0) console.log("Data id", data[0].ProjectID);
   
@@ -86,13 +104,14 @@ function App(){
         .catch(err => { console.log(err); })
     };
   
-    const addData = async () => {
+    const addData = async (e) => {
+      e.preventDefault();
       console.log('add data length', dataLength);
       const newData = {
         "ProjectName": "New Project",
         "StartDate": "2022-01-01",
         "DueDate": "2022-12-31",
-        "Status": "Working On It",
+        "Status": "None",
         "ColorCode":"Yellow",
         "CreatedBy": 1,
         "isActive":1
@@ -100,8 +119,9 @@ function App(){
   
       await axios.post('http://localhost:8078/projects', newData, { headers: { "Content-Type": "application/json" } })
         .then(res => {
-          setData([newData, ...data]);
+          // setData([...data, newData]);
           getData();
+          // refreshPage();
         })
         .catch(error => {
           console.log(error);
@@ -164,6 +184,8 @@ function App(){
       }
       await axios.post("http://localhost:8078/projects/delete", delID)
       .then(res=>{
+        setModalShow(false);
+        setDeleteProjectID();
         getData();
       })
       .catch(err=>{
@@ -284,26 +306,65 @@ function App(){
     const projectTable = data.map((item,id)=>{
       console.log('map item',item);
       return <div key={id}>
-        <TextField data={item} name={item.ProjectName} id={item.ProjectID} index={id} updateData={updateData} deleteData={deleteData}/>
+        <TextField data={item} name={item.ProjectName} id={item.ProjectID} index={id} updateData={updateData} deleteData={deleteData} updateDeleteID={updateDeleteID}/>
       </div>
     })
+    
   
     return (
-      <div className="App">
-        <Button className="btn btn-primary" onClick={addData}>New Project</Button>
+      <div className="App" >
 
-        {/* <div className='table-page'>
-            {
-                data.map((item,i)=>{
-                    
-                    return <TextField data={item} name={item.ProjectName} id={item.ProjectID} key={i}/>
-                    
-                })
-            }
-        </div> */}
+        <div className='sidebar-component'>
+        <Sidebar/>
+        </div>
+        <div className='main-component'>
+        <Button variant="success" size="lg" className='btn mt-2 mb-3' onClick={(e)=>addData(e)}>New Project</Button>
+        <>
+          {projectTable}
+          </>
+          {
+  modalShow 
+  ? 
+  <div
+      className="modal show"
+      style={{ display: 'block'}}
+    >
+      <Modal.Dialog>
+        <Modal.Header>
+          <Modal.Title>Confirm Deleting Project</Modal.Title>
+          <button className='btn btn-danger' 
+          style={{width : '20px', height: '20px',  padding: '0'}}
+          onClick={()=> setModalShow(false)}>X</button>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>Are you sure you want to delete the selected Project ?</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="danger" onClick={()=> setModalShow(false)}>No</Button>
+          <Button variant="success" onClick={(e)=> deleteData(e,deleteProjectID)}>Yes</Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    </div>
+  : ''
+}
+
+        </div>
+        
+        {/* 
+        
+        <div className='main-content' >
+        <Button variant="success" size="lg" className='btn mt-2 mb-3' onClick={(e)=>addData(e)}>New Project</Button>
+        
         <>
         {projectTable}
         </>
+
+        <div className='modal-container'>
+
+</div>
+</div> */}
         
         {/* <BootstrapTable striped hover condensed
           keyField='ProjectID'
@@ -360,6 +421,7 @@ function App(){
 
         {/* <Tasks ProjectID={data.ProjectID}/> */}
         {/* <ProjectList data={data}/> */}
+        
       </div>
     );
   }

@@ -18,7 +18,7 @@ function Form1({addData, projID}) {
   const {control, handleSubmit}= useForm({
     defaultValues:{
       taskName:"",
-      Status:"",
+      Status:"None",
       AssignedTo: 0,
       StartDate: "2022-01-01",
       DueDate: "2022-12-31"
@@ -35,7 +35,8 @@ function Form1({addData, projID}) {
         "StartDate": startDate,
         "DueDate": dueDate,
         "ProjectID": projID,
-        "TaskID": 0
+        "TaskID": 0,
+        "isActive": 1
     }
 
     addData(newData);
@@ -162,7 +163,7 @@ function OffCanvasExample({ name,addData,projID, ...props  }) {
 
   return (
     <>
-      <Button variant="success" onClick={handleShow} className="btn btn-md" style={{"width":"40%", "height":"35px", "padding":"0", "marginLeft":"30%"}}>
+      <Button variant="success" onClick={handleShow} className="btn btn-md" style={{"width":"100%", "height":"35px", "padding":"0"}}>
         Add Task
       </Button>
       <Offcanvas show={show} onHide={handleClose} {...props}>

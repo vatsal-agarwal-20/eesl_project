@@ -93,7 +93,6 @@ function Projects(){
       await axios.post('http://localhost:8078/projects', newData, { headers: { "Content-Type": "application/json" } })
         .then(res => {
           setData([newData, ...data]);
-          
           getData();
         })
         .catch(error => {

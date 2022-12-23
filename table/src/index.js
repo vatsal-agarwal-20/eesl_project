@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'semantic-ui-css/semantic.min.css'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-
+import 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

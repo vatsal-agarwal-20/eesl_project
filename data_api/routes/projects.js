@@ -32,9 +32,6 @@ router.post('/update', (req, res, next) => {
     connection.query(query, [projects.ProjectName, projects.StartDate,
     projects.DueDate, projects.Status, projects.ColorCode, projects.CreatedBy,projects.isActive, projects.ProjectID], (err, results) => {
         if (!err) {
-            if (results.affectedRows === 0) {
-                return res.status(404).json({ message: "Project ID not found" });
-            }
             return res.status(200).json({ message: "Project updated successfully" })
         }
         else {

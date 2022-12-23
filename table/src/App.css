@@ -3,6 +3,22 @@
   padding:0;
   box-sizing: border-box;
 }
+.App
+{
+  display: flex;
+  background:linear-gradient(to left, rgba(45, 108, 129, 0.495),rgba(246, 249, 255, 0.952));
+  /* background-image: url("./bg.jpg"); */
+  flex-direction: row;
+}
+/* .sidebar-component{
+   
+} */
+.main-component{
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-left: 5px;
+}
 
 /* input{
   min-width:"300px";
