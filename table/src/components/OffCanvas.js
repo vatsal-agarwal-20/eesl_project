@@ -12,7 +12,7 @@ function Form1({addData, projID}) {
   const [startDate, setStartDate]= useState("2022-01-01")
   const [dueDate, setDueDate]= useState("2022-12-31")
 
-  console.log("taskname", taskName);
+  // console.log("taskname", taskName);
   // const {control, handleSubmit}= useForm({
   //   defaultValues:{
   //     taskName:"",
@@ -38,7 +38,7 @@ function Form1({addData, projID}) {
     }
 
     addData(newData);
-    console.log("Form new data", newData);
+    // console.log("Form new data", newData);
     // console.log(data);
     // const {taskName,Status,AssignedTo,StartDate,DueDate}=data;
     // const newData = {
