@@ -166,12 +166,12 @@ function App(){
           //   return data;
           // })
           // console.log("UPDATED DATA", updatedData);
+          getData();
           setValue("");
           setColumn({})
           setRowId();
           setRowData({});
           // result = {};
-          getData();
         })
         .catch(err => {
           console.log(err);

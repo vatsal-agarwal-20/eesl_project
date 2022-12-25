@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Form from 'react-bootstrap/Form';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import { Controller, useForm } from 'react-hook-form';
 
 
 function Form1({addData, projID}) {
@@ -11,19 +9,19 @@ function Form1({addData, projID}) {
   const [taskName, setTaskName]=useState("")
   const [status, setStatus]= useState("None")
   const [assignedTo, setAssignedTo]= useState(0)
-  const [startDate, setStartDate]= useState()
-  const [dueDate, setDueDate]= useState()
+  const [startDate, setStartDate]= useState("2022-01-01")
+  const [dueDate, setDueDate]= useState("2022-12-31")
 
   console.log("taskname", taskName);
-  const {control, handleSubmit}= useForm({
-    defaultValues:{
-      taskName:"",
-      Status:"None",
-      AssignedTo: 0,
-      StartDate: "2022-01-01",
-      DueDate: "2022-12-31"
-    }
-  });
+  // const {control, handleSubmit}= useForm({
+  //   defaultValues:{
+  //     taskName:"",
+  //     Status:"None",
+  //     AssignedTo: 0,
+  //     StartDate: "2022-01-01",
+  //     DueDate: "2022-12-31"
+  //   }
+  // });
   
   const formSubmit=(e)=>{
     e.preventDefault();

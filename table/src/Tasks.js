@@ -12,75 +12,9 @@ import Modal from 'react-bootstrap/Modal';
 // import StaticModal from './StaticModal';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import moment from 'moment';
-
-// function StaticModal(props) {
-//   console.log("Modal called");
-//   return (
-//     <div
-//       className="modal show"
-//       style={{ display: 'block'}}
-//     >
-//       <Modal.Dialog>
-//         <Modal.Header closeButton>
-//           <Modal.Title>Modal title</Modal.Title>
-//         </Modal.Header>
-
-//         <Modal.Body>
-//           <p>Modal body text goes here.</p>
-//         </Modal.Body>
-
-//         <Modal.Footer>
-//           <Button variant="secondary">Close</Button>
-//           <Button variant="primary" >Save changes</Button>
-//         </Modal.Footer>
-//       </Modal.Dialog>
-//     </div>
-//   )
-// }
+import QualityRanger from './DateEditor';
 
 function Tasks(props) {
-
-
-  // function DeleteModal(props){
-  //   console.log("Delete Modal Called");
-  //   console.log(props.show);
-  //   console.log(props.data);
-  //   const [show, setShow] = useState(false);
-  
-  //   const handleClose = () => setShow(false);
-  //   const handleShow = () => setModalShow(true);
-
-  
-  //   return (
-  //     <>
-  //       {/* <Button variant="primary" onClick={handleShow}>
-  //         Launch static backdrop modal
-  //       </Button> */}
-  
-  //       <Modal
-  //         show={show}
-  //         onHide={handleClose}
-  //         backdrop="static"
-  //         keyboard={false}
-  //       >
-  //         <Modal.Header closeButton>
-  //           <Modal.Title>Modal title</Modal.Title>
-  //         </Modal.Header>
-  //         <Modal.Body>
-  //           I will not close if you click outside me. Don't even try to press
-  //           escape key.
-  //         </Modal.Body>
-  //         <Modal.Footer>
-  //           <Button variant="secondary" onClick={handleClose}>
-  //             Close
-  //           </Button>
-  //           <Button variant="primary">Understood</Button>
-  //         </Modal.Footer>
-  //       </Modal>
-  //     </>
-  //   );
-  // }
-  
  
 
   // console.log("props data");
@@ -158,7 +92,7 @@ function Tasks(props) {
   }
 
 
-  const updateData = async (rowId, column) => {
+  const updateData = async (rowId, column, newValue) => {
     let result = data.find((item) => {
       return item.TaskID === rowId
     })
@@ -167,6 +101,10 @@ function Tasks(props) {
     console.log(result);
     let cell = column.dataField;
     console.log('cell', cell);
+    console.log(typeof cell);
+    result[cell]=newValue;
+    console.log("again updated result");
+    console.log(result);
 
     await axios.post("http://localhost:8078/tasks/update", result, {
       headers: {
@@ -184,11 +122,12 @@ function Tasks(props) {
         //   return data;
         // })
         // console.log("UPDATED DATA", updatedData);
-        setValue("");
+        setData(data);
+        getData(result.ProjectID);
+        // setValue("");
         setColumn({})
         setRowId();
         setRowData({});
-        getData(result.ProjectID);
         result = {};
       })
       .catch(err => {
@@ -250,15 +189,16 @@ function Tasks(props) {
   //     .catch(err => { console.log(err); })
   // };
 
-  const checkProgress=(data)=>{
-    let c=0;
-    data.map((item) => item["Status"] === 'Completed' ? c + 100 : c+0);
-  }
+  // const checkProgress=(data)=>{
+  //   let c=0;
+  //   data.map((item) => item["Status"] === 'Completed' ? c + 100 : c+0);
+  // }
 
-  const percentageReturn = (data,length) =>{
-    return checkProgress(data)/length;
-    // console.log(checkProgress(data));
-  }
+  // const percentageReturn = (data,length) =>{
+  //   return checkProgress(data)/length;
+  //   // console.log(checkProgress(data));
+  // }
+  
   const columns = [
     {
       dataField: "TaskName",
@@ -329,6 +269,7 @@ function Tasks(props) {
     {
       dataField: "StartDate",
       text: "Start Date",
+      type: "date",
       csvType: {Date},
       formatter: (cell) => {
         console.log("Date cell");
@@ -351,8 +292,18 @@ function Tasks(props) {
             console.log(m);
         return m;
       },
+      
+      // editorRenderer: (editorProps, value, row, column, rowIndex, columnIndex) => (
+      //   console.log("editorRenderer value"),
+      //   console.log(value),
+      //   console.log(editorProps),
+      //   console.log(rowIndex),
+      //   console.log(columnIndex),
+      //   <QualityRanger value={ value } />
+      // ),
+      
       // editor: {
-      //   type: Type.DATE,
+      //   type: Type.DATE
       // },
       // formatter: (cell) => {
       //   let dateObj = cell;
@@ -364,14 +315,12 @@ function Tasks(props) {
       //   }
       //   return `${('0' + dateObj.getDate()).slice(-2)}/${('0' + (dateObj.getMonth() + 1)).slice(-2)}/${dateObj.getFullYear()}`;
       // },
-      // editor: {
-      //   type: Type.DATE
-      // },
       sort: false,
     },
     {
       dataField: "DueDate",
       text: "Due Date",
+      type: "date",
       csvType: {Date},
       formatter: (cell) => {
         let m = moment(); 
@@ -388,8 +337,9 @@ function Tasks(props) {
         // }
         // return `${('0' + dateObj.getDate()).slice(-2)}/${('0' + (dateObj.getMonth() + 1)).slice(-2)}/${dateObj.getFullYear()}`;
       },
+      
       // editor: {
-      //   type: Type.DATE
+      //   type: Type.DATE,
       // },
       sort: false,
     },
@@ -521,12 +471,13 @@ function Tasks(props) {
             // console.log(row);
             console.log("after save column",column);
             setColumn(column);
-            setValue(newValue);
+            // setValue(newValue);
             setRowId(row.TaskID);
             console.log(newValue);
+            
 
             setRowData(row);
-            updateData(row.TaskID, column);
+            updateData(row.TaskID, column, newValue);
             // return {async:true}
           },
           onStartEdit: (row, column, rowIndex, columnIndex) => {
@@ -540,13 +491,13 @@ function Tasks(props) {
             // setRowData(row);
             // console.log("New time");
             // console.log(row["StartDate"]);
-            let m = moment(); 
-            let n= moment();
-            m=moment(row["StartDate"]).format('DD/MMM/YYYY');
-            n=moment(row["DueDate"]).format('DD/MMM/YYYY');
-            console.log("moment date");
-            console.log(m);
-            console.log(n);
+            // let m = moment(); 
+            // let n= moment();
+            // m=moment(row["StartDate"]).format('DD/MMM/YYYY');
+            // n=moment(row["DueDate"]).format('DD/MMM/YYYY');
+            // console.log("moment date");
+            // console.log(m);
+            // console.log(n);
             // row["StartDate"]=m;
             // row["DueDate"]=n;
             // setRowData(row);
