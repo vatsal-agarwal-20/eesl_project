@@ -4,13 +4,12 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor'
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider, { Search, CSVExport } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider, { Search} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { Button } from 'react-bootstrap';
 import Example from './OffCanvas';
 import Modal from 'react-bootstrap/Modal';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import moment from 'moment';
-import QualityRanger from './DateEditor';
 
 function Tasks(props) {
 
