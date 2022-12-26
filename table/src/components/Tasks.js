@@ -298,9 +298,9 @@ function Tasks(props) {
       //   <QualityRanger value={ value } />
       // ),
 
-      // editor: {
-      //   type: Type.DATE
-      // },
+      editor: {
+        type: Type.DATE
+      },
       // formatter: (cell) => {
       //   let dateObj = cell;
       //   if (typeof cell !== 'object') {
@@ -334,9 +334,9 @@ function Tasks(props) {
         // return `${('0' + dateObj.getDate()).slice(-2)}/${('0' + (dateObj.getMonth() + 1)).slice(-2)}/${dateObj.getFullYear()}`;
       },
 
-      // editor: {
-      //   type: Type.DATE,
-      // },
+      editor: {
+        type: Type.DATE
+      },
       sort: false,
     },
     {
